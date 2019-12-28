@@ -1,0 +1,19 @@
+{
+  "name": "travel",
+  "version": "1.0.0",
+  "description": "这是一个闲云旅游项目",
+  "author": "liaojinhua1",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "nuxt": "^2.0.0",
+    "element-ui": "^2.4.11",
+    "@nuxtjs/axios": "^5.3.6"
+  },
+  "devDependencies": {}
+}
