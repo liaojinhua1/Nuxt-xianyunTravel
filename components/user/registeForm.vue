@@ -138,15 +138,18 @@ export default {
           tel: this.registeForm.username
         }
       }).then(res => {
+        //   console.log(res);
+        //   console.log(res.data);
+
         // 发送验证码成功后，把res.data.code 结构出来
-        const code = "000000";
+        const {code} = res.data
         // 把验证码模拟出来，用弹框显示出来
         this.$confirm(`模拟手机验证码为:${code}`, "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
           type: "warning"
         });
-        console.log(res);
+        
       });
     }
   }

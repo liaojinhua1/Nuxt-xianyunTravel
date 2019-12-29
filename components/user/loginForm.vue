@@ -26,12 +26,16 @@ export default {
     // callback: 回调函数，可以接受错误的提示，如果验证通过callback就不用传递参数，callback必须要调用
     const validateUsername = (rule, value, callback) => {
       const reg = /^1[3-9][0-9]{9}$/;
-      // 正则下面的test方法返回布尔值
-      if (reg.test(value)) {
-        // 验证通过
-        callback();
+      if (value === "") {
+        callback("请输入手机号");
       } else {
-        callback("手机号码格式错误");
+        // 正则下面的test方法返回布尔值
+        if (reg.test(value)) {
+          // 验证通过
+          callback();
+        } else {
+          callback("手机号码格式错误");
+        }
       }
     };
     return {
@@ -49,7 +53,18 @@ export default {
   },
   methods: {
     handleLoginSubmit() {
-      this.$store.commit("user/setName", "jack");
+      // 验证整个表单是否符合输入规则
+     this.$refs["loginForm"].validate(valid=>{
+       if(!valid) return;
+      //  调用api发送请求
+       this.$axios({
+         url:'/accounts/login',
+         method:'POST',
+         data:this.loginForm
+       }).then(res=>{
+         console.log(res.data);
+       })
+     })
     }
   }
 };
