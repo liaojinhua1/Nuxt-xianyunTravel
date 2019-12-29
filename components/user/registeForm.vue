@@ -102,7 +102,23 @@ export default {
   methods: {
     //   注册事件
     handleRegisteSubmit() {
-      // if(!this.registeForm)
+      //   检验整个表单的值是否符和规则，如果符合才发送请求
+      //  validate 对整个表单进行校验的方法，参数为一个回调函数。该回调函数会在校验结束后被调用，
+      // 并传入两个参数：是否校验成功和未通过校验的字段。若不传入回调函数，则会返回一个 promise
+      this.$refs["registeForm"].validate(valid => {
+        if (valid) {
+            // 用对象结构，把registeForm中多定义的checkPassword去除
+            const {checkPassword,...data} = this.registeForm
+          // 调用api，发送请求
+          this.$axios({
+            url: "/accounts/register",
+            method: "POST",
+            data
+          }).then(res => {
+            console.log(res.data);
+          });
+        }
+      });
     },
     // 发送验证码事件
     handleSendCaptcha() {
@@ -117,13 +133,19 @@ export default {
       }
       this.$axios({
         url: "/captchas",
-        methods: "POST",
+        method: "POST",
         data: {
           tel: this.registeForm.username
         }
       }).then(res => {
-        // 发送验证码成功后
-        this.$message("发送验证码成功");
+        // 发送验证码成功后，把res.data.code 结构出来
+        const code = "000000";
+        // 把验证码模拟出来，用弹框显示出来
+        this.$confirm(`模拟手机验证码为:${code}`, "提示", {
+          confirmButtonText: "确定",
+          showCancelButton: false,
+          type: "warning"
+        });
         console.log(res);
       });
     }
