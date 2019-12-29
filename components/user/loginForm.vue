@@ -1,12 +1,12 @@
 <template>
   <div class="loginForm">
-    <el-form :model="loginForm" ref="loginForm"  class="form">
-      <el-form-item class="form-item">
-        <el-input placeholder="用户名/手机"></el-input>
+    <el-form :model="loginForm" ref="loginForm" :rules="rules" class="form">
+      <el-form-item class="form-item" prop="username">
+        <el-input placeholder="用户名/手机" v-model="loginForm.username"></el-input>
       </el-form-item>
 
-      <el-form-item class="form-item">
-        <el-input placeholder="密码" type="password"></el-input>
+      <el-form-item class="form-item" prop="password">
+        <el-input placeholder="密码" type="password" v-model="loginForm.password"></el-input>
       </el-form-item>
 
       <p class="form-text">
@@ -21,16 +21,35 @@
 <script>
 export default {
   data() {
+    // rule: 定义校验规则（不是必须的）
+    // value: 表单输入框的值
+    // callback: 回调函数，可以接受错误的提示，如果验证通过callback就不用传递参数，callback必须要调用
+    const validateUsername = (rule, value, callback) => {
+      const reg = /^1[3-9][0-9]{9}$/;
+      // 正则下面的test方法返回布尔值
+      if (reg.test(value)) {
+        // 验证通过
+        callback();
+      } else {
+        callback("手机号码格式错误");
+      }
+    };
     return {
       // 表单数据
-      loginForm:{},
+      loginForm: {
+        username: "",
+        password: ""
+      },
       // 表单规则
-      rules: {}
+      rules: {
+        username: [{ validator: validateUsername, trigger: "blur" }],
+        password: [{ required: true, message: "请输入密码", trigger: "blur" }]
+      }
     };
   },
   methods: {
     handleLoginSubmit() {
-      this.$store.commit('user/setName', "jack")
+      this.$store.commit("user/setName", "jack");
     }
   }
 };
