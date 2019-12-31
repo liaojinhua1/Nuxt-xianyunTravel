@@ -55,15 +55,21 @@ export default {
     handleLoginSubmit() {
       // 验证整个表单是否符合输入规则
      this.$refs["loginForm"].validate(valid=>{
-       if(!valid) return;
-      //  调用api发送请求
-       this.$axios({
-         url:'/accounts/login',
-         method:'POST',
-         data:this.loginForm
-       }).then(res=>{
-         console.log(res.data);
-       })
+       if(!valid) return;     
+      // 调用actions的登录方法
+      this.$store.dispatch('user/login', this.loginForm).then(res=>{
+        if(res==='true'){
+          this.$message.success('登录成功，返回上一个页面')
+        }
+      })
+       //  调用api发送请求
+      //  this.$axios({
+      //    url:'/accounts/login',
+      //    method:'POST',
+      //    data:this.loginForm
+      //  }).then(res=>{
+      //    console.log(res.data);
+      //  })
      })
     }
   }

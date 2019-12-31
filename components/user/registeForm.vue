@@ -44,6 +44,7 @@
 </template>
 
 <script>
+import { teal } from 'color-name';
 export default {
   data() {
     // rule: 定义校验规则（不是必须的）
@@ -109,21 +110,28 @@ export default {
         if (valid) {
             // 用对象结构，把registeForm中多定义的checkPassword去除
             const {checkPassword,...data} = this.registeForm
+          // 调用actions中的registe方法
+          this.$store.dispatch('user/registe', data).then(res=>{
+            if(res === 'true'){
+              // 如果注册成功返回true
+              this.$message.success('注册成功')
+            }
+          })
           // 调用api，发送请求
-          this.$axios({
-            url: "/accounts/register",
-            method: "POST",
-            data
-          }).then(res => {
-            console.log(res.data);
-          });
+          // this.$axios({
+          //   url: "/accounts/register",
+          //   method: "POST",
+          //   data
+          // }).then(res => {
+          //   console.log(res.data);
+          // });
         }
       });
     },
     // 发送验证码事件
     handleSendCaptcha() {
       // 如果没有输入用户名（手机号），则终止
-      if (!this.registeForm.username) {
+      if (this.registeForm.username.trim() === '') {
         this.$confirm("手机号码不能为空", "提示", {
           confirmButtonText: "确定",
           showCancelButton: false,
@@ -131,24 +139,18 @@ export default {
         });
         return;
       }
-      this.$axios({
-        url: "/captchas",
-        method: "POST",
-        data: {
-          tel: this.registeForm.username
-        }
-      }).then(res => {
-        //   console.log(res);
-        //   console.log(res.data);
-
-        // 发送验证码成功后，把res.data.code 结构出来
-        const {code} = res.data
-        // 把验证码模拟出来，用弹框显示出来
-        this.$confirm(`模拟手机验证码为:${code}`, "提示", {
-          confirmButtonText: "确定",
-          showCancelButton: false,
-          type: "warning"
-        });
+         // 调用actions中的captcha方法
+      this.$store.dispatch('user/sendCaptcha',this.registeForm.username).then(res => {   
+        this.$message.success('验证码为：000000')    
+        console.log(111);      
+        // // 发送验证码成功后，把res.data.code 结构出来
+        // const {code} = res.data
+        // // 把验证码模拟出来，用弹框显示出来
+        // this.$confirm(`模拟手机验证码为:${code}`, "提示", {
+        //   confirmButtonText: "确定",
+        //   showCancelButton: false,
+        //   type: "warning"
+        // });
         
       });
     }
