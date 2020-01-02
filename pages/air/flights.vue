@@ -4,7 +4,8 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <FlightsFilters />
+        <!-- 把flightsData传递给子组件 -->
+        <FlightsFilters :data="flightsData" />
         <!-- 航班头部布局 -->
         <FlightsListHead />
 
@@ -42,7 +43,12 @@ export default {
   },
   data() {
     return {
-      flightsData: {}, // 航班总数据
+      // 航班总数据
+      flightsData: {
+        flights: [],
+        info: {},
+        options: {}
+      },
       dataList: [] // 航班列表数据，用于循环flightsItem组件，单独出来是因为要分页
     };
   },
@@ -55,6 +61,7 @@ export default {
       }).then(res => {
         // 航班总数据
         this.flightsData = res.data;
+        console.log(this.flightsData);
         //  航班列表数据
         this.dataList = this.flightsData.flights;
       });
