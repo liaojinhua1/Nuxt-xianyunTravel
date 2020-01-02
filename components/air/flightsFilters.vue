@@ -86,26 +86,60 @@ export default {
   methods: {
     // 选择机场时候触发
     handleAirport(value) {
-      console.log(value);
+      const arr = this.data.flights.filter(v => {
+        return value === v.org_airport_name;
+      });
+      console.log(arr);
+      // 触发父组件的修改dataList的函数
+      this.$emit("setDataList", arr);
     },
 
     // 选择出发时间时候触发
     handleFlightTimes(value) {
-      console.log(value);
+      //   console.log(value); //6,12
+      //   使用解构取出 from 和 to
+      const [from, to] = value.split(",");
+        console.log(from, to);
+      const arr = this.data.flights.filter(v => {
+        //   获取当前的 dep_time （出发时间） 的时，并转换为数值型
+        const start = +v.dep_time.split(":")[0];
+        console.log(start);
+        return start >= from && start < to;
+      });
+      // 触发父组件的修改dataList的函数
+      this.$emit("setDataList", arr);
     },
 
     // 选择航空公司时候触发
     handleCompany(value) {
-      console.log(value);
+      //   console.log(value);
+      //   filter 会把符合条件的数据筛选出来，返回一个新的数组
+      const arr = this.data.flights.filter(v => {
+        return value === v.airline_name;
+      });
+      // 触发父组件的修改dataList的函数
+      this.$emit("setDataList", arr);
     },
 
     // 选择机型时候触发
     handleAirSize(value) {
       console.log(value);
+      const arr = this.data.flights.filter(v => {
+        return value === v.plane_size;
+      });
+      //   触发父组件的修改dataList的函数
+      this.$emit("setDataList", arr);
     },
 
     // 撤销条件时候触发
-    handleFiltersCancel() {}
+    handleFiltersCancel() {
+        this.airport = "", 
+        this.flightTimes = "",
+        this.company = "", 
+        this.airSize =""
+        //   触发父组件的修改dataList的函数
+      this.$emit("setDataList", this.data.flights);
+    }
   }
 };
 </script>

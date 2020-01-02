@@ -5,7 +5,7 @@
       <div class="flights-content">
         <!-- 过滤条件 -->
         <!-- 把flightsData传递给子组件 -->
-        <FlightsFilters :data="flightsData" />
+        <FlightsFilters :data="cacheFlightsData" @setDataList="setDataList"/>
         <!-- 航班头部布局 -->
         <FlightsListHead />
 
@@ -24,7 +24,7 @@
           :page-sizes="[5, 10, 15, 20]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="flightsData.total"
+          :total="total"
         ></el-pagination>
         <!-- :total="total"> -->
       </div>
@@ -63,27 +63,28 @@ export default {
         info: {},
         options: {}
       },
-        // 缓存的变量，当该变量一旦被赋值之后不会被修改
-            // cacheFlightsData: {
-            //     info: {},
-            //     options: {}
-            // },
-      dataList: [], //  // 存放切割出来数据,航班列表数据，用于循环flightsItem组件，单独出来是因为要分页
+      // 缓存的变量，当该变量一旦被赋值之后不会被修改
+      cacheFlightsData: {
+        info: {},
+        options: {}
+      },
+      // dataList: [], //  // 存放切割出来数据,航班列表数据，用于循环flightsItem组件，单独出来是因为要分页
       pageSize: 5, // 每页显示条目个数,设置默认值为5
-      pageIndex: 1 //当前页数，设置默认为1
+      pageIndex: 1, //当前页数，设置默认为1
+      total: 0 // 符合条件的总数据数
     };
   },
   computed: {
-    // // 计算属性监听函数内部引用实例的属性变化，一旦发生了变化，该函数会重新计算，并且返回新的值
-    // dataList() {
-    //   // 请求如果还没完成，返回空数组
-    //   if (!this.flightsData.flights) return [];
-    //   // 计算分页的数据
-    //   return this.flightsData.flights.slice(
-    //     (this.pageIndex - 1) * this.pageSize,
-    //     this.pageIndex * this.pageSize
-    //   );
-    // }
+    // 计算属性监听函数内部引用实例的属性变化，一旦发生了变化，该函数会重新计算，并且返回新的值
+    dataList() {
+      // 请求如果还没完成，返回空数组
+      if (!this.flightsData.flights) return [];
+      // 计算分页的数据
+      return this.flightsData.flights.slice(
+        (this.pageIndex - 1) * this.pageSize,
+        this.pageIndex * this.pageSize
+      );
+    }
   },
   methods: {
     // 获取航班总数据
@@ -95,35 +96,29 @@ export default {
         // 航班总数据
         this.flightsData = res.data;
         console.log(this.flightsData);
-        //  航班列表数据
-        // this.dataList = this.flightsData.flights;
-        this.setDataList();
+        // 给缓存变量赋值
+        this.cacheFlightsData = {...res.data}
+        // 总条数
+        this.total = this.flightsData.total;
       });
     },
     // 给过滤的组件修改this.flightsData.flights
-    // setDataList(arr) {
-    //   // arr 就是过滤后的符合条件的数据
-    //   this.flightsData.flights = arr;
-    //   // 修改总条数
-    //   this.total = arr.length;
-    // },
-     // 计算属性监听函数内部引用实例的属性变化，一旦发生了变化，该函数会重新计算，并且返回新的值
-    setDataList() {
-      // 计算分页的数据
-       this.dataList = this.flightsData.flights.slice(
-        (this.pageIndex - 1) * this.pageSize,
-        this.pageIndex * this.pageSize
-      );
-    },
+    setDataList(arr) {
+      console.log(arr);
+      // arr 就是过滤后的符合条件的数据
+      this.flightsData.flights = arr;
+      // 修改总条数
+      this.total = arr.length;
+    },  
     // 切换每页条数时候触发事件
     handleSizeChange(val) {
       this.pageSize = val;
-      this.setDataList();
+      // this.setDataList();
     },
     // 切换当前页数时候触发的事件
     handleCurrentChange(val) {
       this.pageIndex = val;
-      this.setDataList();
+      // this.setDataList();
     }
   }
 };
@@ -143,7 +138,7 @@ export default {
 .aside {
   width: 240px;
 }
-.el-pagination{
-  text-align: center
+.el-pagination {
+  text-align: center;
 }
 </style>
