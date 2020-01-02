@@ -4,13 +4,13 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-
+        <FlightsFilters />
         <!-- 航班头部布局 -->
         <FlightsListHead />
 
         <!-- 航班信息 -->
-         <!-- :data="item" 把每一项的航班列表信息传递给子组件 -->
-        <FlightsItem v-for="(item,index) in dataList" :key="index"  :data="item" />
+        <!-- :data="item" 把每一项的航班列表信息传递给子组件 -->
+        <FlightsItem v-for="(item,index) in dataList" :key="index" :data="item" />
       </div>
 
       <!-- 侧边栏 -->
@@ -27,12 +27,15 @@
 import FlightsListHead from "@/components/air/flightsListHead.vue";
 // 导入列表页组件
 import FlightsItem from "@/components/air/flightsItem.vue";
+// 导入过滤组件
+import FlightsFilters from "@/components/air/flightsFilters.vue";
 
 export default {
   // 组件注册
   components: {
     FlightsListHead,
-    FlightsItem
+    FlightsItem,
+    FlightsFilters
   },
   mounted() {
     this.getData();
@@ -52,7 +55,6 @@ export default {
       }).then(res => {
         // 航班总数据
         this.flightsData = res.data;
-        console.log(this.flightsData.flights);
         //  航班列表数据
         this.dataList = this.flightsData.flights;
       });
