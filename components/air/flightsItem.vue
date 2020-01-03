@@ -46,14 +46,13 @@
             </el-col>
             <el-col :span="5" class="price">￥{{item.org_settle_price}}</el-col>
             <el-col :span="3" class="choose-button">
-              <el-button type="warning" size="mini">选定</el-button>
+              <el-button type="warning" size="mini" @click="handleChoose(data.id, item.seat_xid)">选定</el-button>
               <p>剩余：{{item.discount}}</p>
             </el-col>
           </el-row>
         </el-col>
       </el-row>
     </div>
-    
   </div>
 </template>
 
@@ -76,29 +75,41 @@ export default {
       isShow: false
     };
   },
+  methods: {
+    // 选定跳转事件
+    handleChoose(id, seat_xid) {
+      this.$router.push({
+        path: "/air/order",
+        query: {
+          id,
+          seat_xid
+        }
+      });
+    }
+  },
   //   使用computed会自动监听实例的改变，相比methods不需要再调用
   computed: {
     //  监听时间的变化，重新计算航班所用的时间
-      rankTime(){
-        //   把出发时间转换为分
-        const dep = this.data.dep_time.split(':')
-        const dep_min = +dep[0]*60 + +dep[1]
-        //   把到达时间转换为分
-        const arr = this.data.arr_time
-        let arr_min = +arr[0]*60 + +arr[1]
-        //   判断到达时间是不是第二天，是的话，到达就加上24*60分
-        if(arr_min < dep_min){
-            arr_min += 24*60
-        }
-        //   用到达时间减去出发时间，得到航班所用时间，单位为分
-        let dis = arr_min - dep_min
-        //   用/计算，并向下取整，获得航班所用时间的时
-        const hours = Math.floor(dis/60)
-        //   用%计算，获得航班所用时间的分
-        const minute = dis%60
-        //   拼接字符串
-          return `${hours}时${minute}分`
+    rankTime() {
+      //   把出发时间转换为分
+      const dep = this.data.dep_time.split(":");
+      const dep_min = +dep[0] * 60 + +dep[1];
+      //   把到达时间转换为分
+      const arr = this.data.arr_time;
+      let arr_min = +arr[0] * 60 + +arr[1];
+      //   判断到达时间是不是第二天，是的话，到达就加上24*60分
+      if (arr_min < dep_min) {
+        arr_min += 24 * 60;
       }
+      //   用到达时间减去出发时间，得到航班所用时间，单位为分
+      let dis = arr_min - dep_min;
+      //   用/计算，并向下取整，获得航班所用时间的时
+      const hours = Math.floor(dis / 60);
+      //   用%计算，获得航班所用时间的分
+      const minute = dis % 60;
+      //   拼接字符串
+      return `${hours}时${minute}分`;
+    }
   }
 };
 </script>
