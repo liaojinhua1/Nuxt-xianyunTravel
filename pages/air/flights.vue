@@ -5,7 +5,7 @@
       <div class="flights-content">
         <!-- 过滤条件 -->
         <!-- 把flightsData传递给子组件 -->
-        <FlightsFilters :data="cacheFlightsData" @setDataList="setDataList"/>
+        <FlightsFilters :data="cacheFlightsData" @setDataList="setDataList" />
         <!-- 航班头部布局 -->
         <FlightsListHead />
 
@@ -31,7 +31,7 @@
       <!-- 侧边栏 -->
       <div class="aside">
         <!-- 侧边栏组件 -->
-        <FlightsAside/>
+        <FlightsAside />
       </div>
     </el-row>
   </section>
@@ -47,7 +47,6 @@ import FlightsItem from "@/components/air/flightsItem.vue";
 import FlightsFilters from "@/components/air/flightsFilters.vue";
 // 导入侧边栏组件
 import FlightsAside from "@/components/air/flightsAside.vue";
-
 
 export default {
   // 组件注册
@@ -79,6 +78,15 @@ export default {
       total: 0 // 符合条件的总数据数
     };
   },
+  watch: {
+    // 监听url的变化，重新加载
+    $route() {
+      // 重新加载航班列表
+      this.getData();
+      // 分页初始化为1---当之前的数据比这次获取的数据多时，pageIndex会停留在上一次的页码，若这次的数据没有那么多条则会显示不出来
+      this.pageIndex = 1;
+    }
+  },
   computed: {
     // 计算属性监听函数内部引用实例的属性变化，一旦发生了变化，该函数会重新计算，并且返回新的值
     dataList() {
@@ -102,7 +110,7 @@ export default {
         this.flightsData = res.data;
         console.log(this.flightsData);
         // 给缓存变量赋值
-        this.cacheFlightsData = {...res.data}
+        this.cacheFlightsData = { ...res.data };
         // 总条数
         this.total = this.flightsData.total;
       });
@@ -114,7 +122,7 @@ export default {
       this.flightsData.flights = arr;
       // 修改总条数
       this.total = arr.length;
-    },  
+    },
     // 切换每页条数时候触发事件
     handleSizeChange(val) {
       this.pageSize = val;

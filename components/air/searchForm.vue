@@ -222,12 +222,15 @@ export default {
           return;
         }
       });
+
       if (valid === false) return;
       // 跳转到机票的列表页
       this.$router.push({
         path: "/air/flights",
         query: this.form
       });
+    // 把提交的数据保存到store
+    this.$store.commit('air/setHistory', this.form)
     }
   }
 };
