@@ -57,6 +57,9 @@
 </template>
 
 <script>
+// 导入时间插件
+import moment from "moment";
+
 export default {
   data() {
     return {
@@ -76,13 +79,37 @@ export default {
       // 出发城市的下拉列表数据
       departData: [],
       // 到达城市的下拉列表数据
-      destData: []
+      destData: [],
+      // 禁止今天以前的日期
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() + 3600 * 1000 * 24 < Date.now();
+        }
+      }
     };
   },
   methods: {
+    // 切换tab栏
     handleSearchTab(item, index) {
       this.currentTab = index;
     },
+    // 失焦时，默认选取下拉列表的第一项
+    // 出发城市输入框失去焦点时候默认选中第一个城市
+    handleDepartChange() {
+      if (this.departData.length > 0) {
+        this.form.departCity = this.departData[0].value;
+        this.form.departCode = this.departData[0].sort;
+      }
+    },
+    // 失焦时，默认选取下拉列表的第一项
+    // 到达城市输入框失去焦点时候默认选中第一个城市
+    handleDestChange() {
+      if (this.destData.length > 0) {
+        this.form.destCity = this.destData[0].value;
+        this.form.destCode = this.destData[0].sort;
+      }
+    },
+    // 监听出发城市的输入时候触发的事件
     // 出发城市---返回输入建议的方法
     // value是输入框的值
     // cb是回调函数, 调用时候展示下拉列表，注意参数必须是数组，数组中元素必须是对象，对象中必须包含value属性
@@ -92,7 +119,7 @@ export default {
         return;
       }
       //   根据输入框的value值发送请求
-      console.log(value);
+      //   console.log(value);
       this.$axios({
         url: "/airs/city",
         params: {
@@ -111,21 +138,13 @@ export default {
     },
     // 出发城市---点击选中建议项时触发，item选中的对象
     handleDepartSelect(item) {
-      // console.log(item);
       // 修改data中的值
-      if (this.departData.length > 0) {
-        // 获取当前选中的城市代码
-        this.form.departCode = item.sort;
-      }
+      // 获取当前选中的城市代码
+      this.form.departCode = item.sort;
+      // this.form.departCity = item.value;
     },
-    // 失焦时，默认选取下拉列表的第一项
-    // 出发城市输入框失去焦点时候默认选中第一个城市
-    handleDepartChange() {
-      if (this.departData.length > 0) {
-        this.form.departCity = this.departData[0].value;
-        this.form.departCode = this.departData[0].sort;
-      }
-    },
+    // 目标城市输入框获得焦点时触发
+    // value 是选中的值，cb是回调函数，接收要展示的列表
     // 到达城市---返回输入建议的方法
     queryDestSearch(value, callback) {
       // 如果到达城市输入框为空，则终止
@@ -150,33 +169,65 @@ export default {
         callback(this.destData);
       });
     },
-    // 失焦时，默认选取下拉列表的第一项
-    // 到达城市输入框失去焦点时候默认选中第一个城市
-    handleDestChange() {
-      if (this.destData.length > 0) {
-        this.form.destCity = this.destData[0].value;
-        this.form.destCode = this.destData[0].sort;
-      }
-    },
+
     // 到达城市---点击选中建议项时触发
     handleDestSelect(item) {
-      if (this.destData.length > 0) {
-        this.from.destCode = item.sort;
-      }
+      console.log(item);
+      // 获取当前选中的城市代码
+      this.form.destCode = item.sort;
     },
     // 日期---选择日期时触发
-    handleDate() {},
-    // 搜索事件
-    handleSubmit() {},
+    handleDate(value) {
+      // value 是中国标准时间 Fri Jan 03 2020 00:00:00 GMT+0800 (中国标准时间)
+      this.form.departDate = moment(value).format("YYYY-MM-DD"); // 2019-12-31
+    },
+
     // 交换地点事件
     handleReverse() {
       // 使用对象结构交换数据
-      const { departCity, departCode, destCity, destCode } = this.from;
-      this.departCity = departCity;
-      this.departCode = departCode;
+      const { departCity, departCode, destCity, destCode } = this.form;
+      this.form.departCity = destCity;
+      this.form.departCode = destCode;
 
-      this.destCity = destCity;
-      this.destCode = destCode;
+      this.form.destCity = departCity;
+      this.form.destCode = departCode;
+    },
+    // 搜索事件
+    handleSubmit() {
+      // 自定义校验规则 （通过状态来判断）
+      const rules = {
+        departCity: {
+          value: this.form.departCity,
+          err_message: "出发城市不能为空"
+        },
+        destCity: {
+          value: this.form.destCity,
+          err_message: "到达城市不能为空"
+        },
+        departDate: {
+          value: this.form.departDate,
+          err_message: "出发日期不能为空"
+        }
+      };
+      // 验证的变量
+      let valid = true;
+      // 循环判断rules属性的值是否为空
+      Object.keys(rules).forEach(key => {
+        // 只要valid是false就没有必要再循环了
+        if (valid === false) return;
+        // 如果有一项为空，把valid设置为false
+        if (rules[key].value === "") {
+          this.$message.error(rules[key].err_message);
+          valid = false;
+          return;
+        }
+      });
+      if (valid === false) return;
+      // 跳转到机票的列表页
+      this.$router.push({
+        path: "/air/flights",
+        query: this.form
+      });
     }
   }
 };

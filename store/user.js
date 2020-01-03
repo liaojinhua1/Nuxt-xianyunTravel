@@ -2,11 +2,11 @@
 import { MessageBox } from 'element-ui';
 // 暴露仓库
 // 用户管理
-export const state = {
+export const state = () => ({
         // 采用接口返回的数据结构  
          // 登录后的数据，包含token和user对象     
         usreInfo:{}
-}
+})
 // 同步修改state的数据
 export const mutations = {
     // 自定义一个函数，修改name属性
