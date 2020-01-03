@@ -20,7 +20,9 @@
         <el-autocomplete
           :fetch-suggestions="queryDepartSearch"
           placeholder="请搜索出发城市"
+          v-model="form.departCity"
           @select="handleDepartSelect"
+          @blur="handleDepartChange"
           class="el-autocomplete"
         ></el-autocomplete>
       </el-form-item>
@@ -28,13 +30,21 @@
         <el-autocomplete
           :fetch-suggestions="queryDestSearch"
           placeholder="请搜索到达城市"
+          v-model="form.destCity"
           @select="handleDestSelect"
+          @blur="handleDestChange"
           class="el-autocomplete"
         ></el-autocomplete>
       </el-form-item>
       <el-form-item label="出发时间">
         <!-- change 用户确认选择日期时触发 -->
-        <el-date-picker type="date" placeholder="请选择日期" style="width: 100%;" @change="handleDate"></el-date-picker>
+        <el-date-picker
+          type="date"
+          placeholder="请选择日期"
+          style="width: 100%;"
+          @change="handleDate"
+          v-model="form.departDate"
+        ></el-date-picker>
       </el-form-item>
       <el-form-item label>
         <el-button style="width:100%;" type="primary" icon="el-icon-search" @click="handleSubmit">搜索</el-button>
@@ -54,35 +64,118 @@ export default {
         { icon: "iconfont icondancheng", name: "单程" },
         { icon: "iconfont iconshuangxiang", name: "往返" }
       ],
-      currentTab:0
+      currentTab: 0,
+      //   需要提交的是5个参数
+      form: {
+        departCity: "", // 出发城市
+        departCode: "", // 出发城市代码
+        destCity: "", // 到达城市
+        destCode: "", // 到达城市代码
+        departDate: "" // 日期字符串
+      },
+      // 出发城市的下拉列表数据
+      departData: [],
+      // 到达城市的下拉列表数据
+      destData: []
     };
   },
   methods: {
-    handleSearchTab(item,index) {
-        this.currentTab = index
+    handleSearchTab(item, index) {
+      this.currentTab = index;
     },
-    queryDepartSearch(){
-
+    // 出发城市---返回输入建议的方法
+    // value是输入框的值
+    // cb是回调函数, 调用时候展示下拉列表，注意参数必须是数组，数组中元素必须是对象，对象中必须包含value属性
+    queryDepartSearch(value, callback) {
+      if (value.trim() === "") {
+        callback([]);
+        return;
+      }
+      //   根据输入框的value值发送请求
+      console.log(value);
+      this.$axios({
+        url: "/airs/city",
+        params: {
+          name: value
+        }
+      }).then(res => {
+        const { data } = res.data;
+        // 循环给data中每一项添加一个value属性，并且没有市字的
+        this.departData = data.map(v => {
+          v.value = v.name.replace("市", "");
+          return v;
+          // 下拉提示列表必须要有value字段
+        });
+      });
+      callback(this.departData);
     },
-    handleDepartSelect(){
-
+    // 出发城市---点击选中建议项时触发，item选中的对象
+    handleDepartSelect(item) {
+      // console.log(item);
+      // 修改data中的值
+      if (this.departData.length > 0) {
+        // 获取当前选中的城市代码
+        this.form.departCode = item.sort;
+      }
     },
-    queryDestSearch(){
-
+    // 失焦时，默认选取下拉列表的第一项
+    // 出发城市输入框失去焦点时候默认选中第一个城市
+    handleDepartChange() {
+      if (this.departData.length > 0) {
+        this.form.departCity = this.departData[0].value;
+        this.form.departCode = this.departData[0].sort;
+      }
     },
-    handleDestSelect(){
-
+    // 到达城市---返回输入建议的方法
+    queryDestSearch(value, callback) {
+      // 如果到达城市输入框为空，则终止
+      if (value.trim() === "") {
+        callback([]);
+        return;
+      }
+      //   发送请求获取城市列表
+      this.$axios({
+        url: "/airs/city",
+        params: {
+          name: value
+        }
+      }).then(res => {
+        const { data } = res.data;
+        // 循环给data中每一项添加一个value属性，并且没有市字的
+        this.destData = data.map(v => {
+          v.value = v.name.replace("市", "");
+          return v;
+          // 下拉提示列表必须要有value字段
+        });
+        callback(this.destData)
+      });
     },
-    handleDate(){
-
+    // 失焦时，默认选取下拉列表的第一项
+    // 到达城市输入框失去焦点时候默认选中第一个城市
+    handleDestChange() {
+      if (this.destData.length > 0) {
+        this.form.destCity = this.destData[0].value;
+        this.form.destCode = this.destData[0].sort;
+      }
     },
+    // 到达城市---点击选中建议项时触发
+    handleDestSelect(item) {
+      if (this.destData.length > 0) {
+        this.from.destCode = item.sort;
+      }
+    },
+    // 日期---选择日期时触发
+    handleDate() {},
     // 搜索事件
-    handleSubmit(){
+    handleSubmit() {
 
     },
     // 交换地点事件
-    handleReverse(){
-
+    handleReverse() {
+        this.$message({
+            type: 'info',
+            message: '暂时还未开通此功能'
+          });  
     }
   }
 };
