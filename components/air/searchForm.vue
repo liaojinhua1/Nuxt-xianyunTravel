@@ -147,7 +147,7 @@ export default {
           return v;
           // 下拉提示列表必须要有value字段
         });
-        callback(this.destData)
+        callback(this.destData);
       });
     },
     // 失焦时，默认选取下拉列表的第一项
@@ -167,15 +167,16 @@ export default {
     // 日期---选择日期时触发
     handleDate() {},
     // 搜索事件
-    handleSubmit() {
-
-    },
+    handleSubmit() {},
     // 交换地点事件
     handleReverse() {
-        this.$message({
-            type: 'info',
-            message: '暂时还未开通此功能'
-          });  
+      // 使用对象结构交换数据
+      const { departCity, departCode, destCity, destCode } = this.from;
+      this.departCity = departCity;
+      this.departCode = departCode;
+
+      this.destCity = destCity;
+      this.destCode = destCode;
     }
   }
 };
