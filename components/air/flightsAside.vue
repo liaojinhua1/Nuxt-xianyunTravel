@@ -40,9 +40,7 @@
 
 <script>
 export default {
-  mounted() {
-    console.log(this.$store.state.air.history);
-  }
+ 
 };
 </script>
 

@@ -70,7 +70,8 @@ export default {
       // 缓存的变量，当该变量一旦被赋值之后不会被修改
       cacheFlightsData: {
         info: {},
-        options: {}
+        options: {},
+        flights:[]
       },
       // dataList: [], //  // 存放切割出来数据,航班列表数据，用于循环flightsItem组件，单独出来是因为要分页
       pageSize: 5, // 每页显示条目个数,设置默认值为5
