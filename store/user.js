@@ -36,15 +36,16 @@ export const actions = {
 
  
     // 发送验证码
-    sendCaptcha(store,data){
-        this.$axios({
+    sendCaptcha(store,data,callback){
+        return this.$axios({
             url: "/captchas",
             methods: "POST",
             data:{
                 tel:data
             }
-        }).then(res =>{
-            
+        })
+        // .then(res =>{
+        //      callback(res)
             // console.log(res.data);
             // 发送验证码成功后，把res.data.code 结构出来
             // const {code} = res.data
@@ -54,7 +55,7 @@ export const actions = {
             // showCancelButton: false,
             // type: "warning"
             // });
-        })
+        // })
     },
 
     // 注册

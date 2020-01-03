@@ -140,17 +140,18 @@ export default {
         return;
       }
          // 调用actions中的captcha方法
-      this.$store.dispatch('user/sendCaptcha',this.registeForm.username).then(res => {   
+      this.$store.dispatch('user/sendCaptcha',this.registeForm.username)
+      .then(res => {   
         this.$message.success('验证码为：000000')    
-        console.log(111);      
-        // // 发送验证码成功后，把res.data.code 结构出来
-        // const {code} = res.data
-        // // 把验证码模拟出来，用弹框显示出来
-        // this.$confirm(`模拟手机验证码为:${code}`, "提示", {
-        //   confirmButtonText: "确定",
-        //   showCancelButton: false,
-        //   type: "warning"
-        // });
+      //   console.log(111);      
+      //   // // 发送验证码成功后，把res.data.code 结构出来
+      //   // const {code} = res.data
+      //   // // 把验证码模拟出来，用弹框显示出来
+      //   // this.$confirm(`模拟手机验证码为:${code}`, "提示", {
+      //   //   confirmButtonText: "确定",
+      //   //   showCancelButton: false,
+      //   //   type: "warning"
+      //   // });
         
       });
     }

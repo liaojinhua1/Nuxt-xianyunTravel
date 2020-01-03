@@ -30,8 +30,12 @@
     <div class="air-column">
       <h2>保险</h2>
       <div>
-        <div class="insurance-item">
-          <el-checkbox label="航空意外险：￥30/份×1  最高赔付260万" border></el-checkbox>
+        <div class="insurance-item" v-for="(item,index) in data.insurances" :key="index">
+          <el-checkbox
+            :label="`${item.type}：￥${item.price}/份×1  最高赔付${item.compensation}`"
+            border
+            @change="handleInsurance(item.id)"
+          ></el-checkbox>
         </div>
       </div>
     </div>
@@ -41,11 +45,11 @@
       <div class="contact">
         <el-form label-width="60px">
           <el-form-item label="姓名">
-            <el-input></el-input>
+            <el-input v-model="contactName"></el-input>
           </el-form-item>
 
           <el-form-item label="手机">
-            <el-input placeholder="请输入内容">
+            <el-input placeholder="请输入内容" v-model="contactPhone">
               <template slot="append">
                 <el-button @click="handleSendCaptcha">发送验证码</el-button>
               </template>
@@ -53,7 +57,7 @@
           </el-form-item>
 
           <el-form-item label="验证码">
-            <el-input></el-input>
+            <el-input v-model="captcha"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
@@ -103,12 +107,59 @@ export default {
     handleDeleteUser(index) {
       this.users.splice(index, 1);
     },
-
+    // 保险选中事件
+    handleInsurance(id) {
+      const index = this.insurances.indexOf(id);
+      // 有的话删除掉该id
+      if (index > -1) {
+        this.insurances.splice(index, 1);
+      } else {
+        // 没有的话添加
+        this.insurances.push(id);
+      }
+    },
     // 发送手机验证码
-    handleSendCaptcha() {},
+    handleSendCaptcha() {
+      // 如果手机号为空
+      if (!this.contactPhone) {
+        this.$message.error("请输入手机号！");
+        return;
+      }
+
+      // 调用actions的发送手机验证码的接口
+      this.$store.dispatch("user/sendCaptcha", this.contactPhone).then(res => {
+        console.log(111);
+        this.$message.success("手机验证码发送成功：000000");
+      });
+    },
 
     // 提交订单
-    handleSubmit() {}
+    handleSubmit() {
+      // console.log(this.$store.state.user.usreInfo.token);
+      // 提交给创建订单接口的参数
+      const data = {
+        users: this.users,
+        insurances: this.insurances, // 保险id
+        contactName: this.contactName,
+        contactPhone: this.contactPhone,
+        captcha: this.captcha,
+        invoice: false,
+        seat_xid: this.$route.query.seat_xid, // 座位的id
+        air: this.$route.query.id // 航班的id
+      };
+      // 创建订单接口
+      this.$axios({
+        url: "/airorders",
+        method: "POST",
+        headers: {
+          // Bearer是token字符串前面必须要声明的，后面加上空格，再连接上token
+          Authorization: "Bearer " + this.$store.state.user.usreInfo.token
+        },
+        data
+      }).then(res => {
+        console.log(res);
+      });
+    }
   }
 };
 </script>
