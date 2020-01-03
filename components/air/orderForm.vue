@@ -122,14 +122,29 @@ export default {
     handleSendCaptcha() {
       // 如果手机号为空
       if (!this.contactPhone) {
-        this.$message.error("请输入手机号！");
+        this.$confirm("手机号码不能为空", "提示", {
+          confirmButtonText: "确定",
+          showCancelButton: false,
+          type: "warning"
+        });
         return;
       }
-
+      //   验证手机号码是否有11位
+      if (this.contactPhone.length !== 11) {
+        this.$confirm("手机号码格式错误", "提示", {
+          confirmButtonText: "确定",
+          showCancelButton: false,
+          type: "warning"
+        });
+        return;
+      }
       // 调用actions的发送手机验证码的接口
       this.$store.dispatch("user/sendCaptcha", this.contactPhone).then(res => {
-        console.log(111);
-        this.$message.success("手机验证码发送成功：000000");
+        this.$confirm(`"手机验证码发送成功：000000"`, "提示", {
+          confirmButtonText: "确定",
+          showCancelButton: false,
+          type: "warning"
+        });
       });
     },
 
@@ -147,17 +162,29 @@ export default {
         seat_xid: this.$route.query.seat_xid, // 座位的id
         air: this.$route.query.id // 航班的id
       };
+      const {
+        user: { userInfo }
+      } = this.$store.state;
+
+      this.$message({
+        message: "正在生成订单！请稍等",
+        type: "success"
+      });
+
       // 创建订单接口
       this.$axios({
         url: "/airorders",
         method: "POST",
         headers: {
           // Bearer是token字符串前面必须要声明的，后面加上空格，再连接上token
-          Authorization: "Bearer " + this.$store.state.user.usreInfo.token
+          Authorization: `Bearer${usreInfo.token || "NO TOKEN"}`
         },
         data
       }).then(res => {
-        console.log(res);
+        // 跳转到付款页
+        this.$router.push({
+          path: "/air/pay"
+        });
       });
     }
   }
