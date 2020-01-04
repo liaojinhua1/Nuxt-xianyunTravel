@@ -109,7 +109,7 @@ export default {
       }).then(res => {
         // 航班总数据
         this.flightsData = res.data;
-        console.log(this.flightsData);
+        // console.log(this.flightsData);
         // 给缓存变量赋值
         this.cacheFlightsData = { ...res.data };
         // 总条数
@@ -118,7 +118,7 @@ export default {
     },
     // 给过滤的组件修改this.flightsData.flights
     setDataList(arr) {
-      console.log(arr);
+      // console.log(arr);
       // arr 就是过滤后的符合条件的数据
       this.flightsData.flights = arr;
       // 修改总条数

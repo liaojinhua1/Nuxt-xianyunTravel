@@ -63,6 +63,7 @@
         <el-button type="warning" class="submit" @click="handleSubmit">提交订单</el-button>
       </div>
     </div>
+    <span>{{allPrice}}</span>
   </div>
 </template>
 
@@ -93,10 +94,31 @@ export default {
       air: 0 //航班id
     };
   },
+  computed: {
+    //   实使计算订单总金额，总价格展示在侧边栏的组件
+    allPrice() {
+      // 总价price，price = （机票价格 + 保险（可能购买多种保险） + 燃油费）* 人数
+      let price = 0;
+
+      if (!this.data.seat_infos.org_settle_price) return;
+
+      // 机票的单价
+      price += this.data.seat_infos.org_settle_price;
+      // 燃油费
+      price += this.data.airport_tax_audlet;
+      // 保险
+      price += this.insurances.length * 30;
+      // 根据乘机人的数量翻倍
+      price *= this.users.length;
+      // 传递给store
+      this.$store.commit("air/setAllPrice", price);
+      // 在模板中返回空值，因为computed中的属性一定要在模板中调用
+      return "";
+    }
+  },
   methods: {
     // 添加乘机人
     handleAddUsers() {
-      console.log(111);
       this.users.push({
         username: "",
         id: ""
@@ -162,6 +184,7 @@ export default {
         seat_xid: this.$route.query.seat_xid, // 座位的id
         air: this.$route.query.id // 航班的id
       };
+      //   使用对象结构结构出userInfo
       const {
         user: { userInfo }
       } = this.$store.state;
