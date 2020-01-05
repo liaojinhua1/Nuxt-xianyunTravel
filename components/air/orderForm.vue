@@ -171,8 +171,7 @@ export default {
     },
 
     // 提交订单
-    handleSubmit() {
-      // console.log(this.$store.state.user.usreInfo.token);
+    handleSubmit() {      
       // 提交给创建订单接口的参数
       const data = {
         users: this.users,
@@ -186,7 +185,7 @@ export default {
       };
       //   使用对象结构结构出userInfo
       const {
-        user: { userInfo }
+        user: { usreInfo  }
       } = this.$store.state;
 
       this.$message({
@@ -200,13 +199,20 @@ export default {
         method: "POST",
         headers: {
           // Bearer是token字符串前面必须要声明的，后面加上空格，再连接上token
-          Authorization: `Bearer${usreInfo.token || "NO TOKEN"}`
+          Authorization: `Bearer ${usreInfo.token || "NO TOKEN"}`
+          // Authorization: "Bearer " + this.$store.state.user.usreInfo.token
         },
         data
       }).then(res => {
+        // 订单的id
+        const { id } = res.data.data;
+        // console.log(res);
         // 跳转到付款页
         this.$router.push({
-          path: "/air/pay"
+          path: "/air/pay",
+          query: {
+            id
+          }
         });
       });
     }

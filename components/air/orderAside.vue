@@ -55,6 +55,7 @@ export default {
   computed: {
     // 相隔时间
     rankTime() {
+      if (!this.data.arr_time) return;
       // 到达时间
       const arr = this.data.arr_time;
       const dep = this.data.dep_time;
