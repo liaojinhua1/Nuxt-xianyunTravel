@@ -1,33 +1,44 @@
 <template>
   <div class="contianer">
-  <el-row type="flex" justify="space-between">
-    <!-- 侧边栏 -->
-    <div class="nav-menus">
-      <Menus />
-    </div>
-    <!-- 顶部过滤列表 -->
-    <div class="flights-content"></div>
-  </el-row>
+    <el-row type="flex" justify="space-between" :gutter="20">
+      <!-- 侧边栏 -->
+      <el-col :span="6">
+        <div class="nav-menus">
+          <Menus :data="menusData"/>
+        </div>
+      </el-col>
+      <el-col :span="17">
+        <PostMain />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 // 导入侧边栏组件
 import Menus from "@/components/post/menus.vue";
+// 导入主体部分
+import PostMain from "@/components/post/postMain.vue";
+
 export default {
+  // 注册组件
   components: {
-    Menus
+    Menus,
+    PostMain
   },
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1"
+      menusData: [] //侧边导航的城市列表数据
     };
   },
-  methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
-    }
+  // 发送请求获取城市列表
+  mounted() {
+    this.$axios({
+      url: "posts/cities"
+    }).then(res => {
+      this.menusData = res.data.data;
+      console.log(this.menusData);
+    });
   }
 };
 </script>
@@ -36,17 +47,9 @@ export default {
 .contianer {
   width: 1000px;
   margin: 20px auto;
-}
-
-.flights-content {
-  width: 725px;
-  font-size: 14px;
-}
-
-.nav-menus {
-  width: 260px;
-}
-.el-pagination {
-  text-align: center;
+  // 侧边栏
+  .nav-menus {
+    width: 260px;
+  }
 }
 </style>

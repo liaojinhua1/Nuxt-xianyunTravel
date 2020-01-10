@@ -1,118 +1,139 @@
 <template>
-  <div class="menus">
-    <div class="menus-body">
-      <!-- collapse-transition :collapse-transition="true" 展开时是否有动画 -->
-      <el-menu
-        :default-active="activeIndex"
-        class="el-menu"
-        mode="horizontal "
-        @select="handleSelect"
-        :collapse="true"
-        text-color="#000"
-        active-text-color="#ffd04b"
+  <div class="left-menus">
+    <!-- 鼠标移出整个menus -->
+    <div class="menus" @mouseleave="handleleave">
+      <!-- 循环生成数据 -->
+      <!-- 热门 -->
+      <div
+        class="menus-item"
+        v-for="(item, index) in data"
+        :key="index"
+        @mouseenter="handleenter(index)"
       >
-        <el-submenu index="1">
-          <template slot="title" class="active">san</template>
-          <el-menu-item index="1-1">选项1</el-menu-item>
-          <el-menu-item index="1-1">选项2</el-menu-item>
-          <el-menu-item index="1-3">选项3</el-menu-item>
-        </el-submenu>
+        <!-- <el-row type="flex"
+        justify="space-between" class="active">-->
+        {{item.type}}
+        <i class="el-icon-arrow-right fr"></i>
 
-        <el-submenu index="2">
-          <template slot="title">san</template>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
-          <el-menu-item index="2-3">选项3</el-menu-item>
-        </el-submenu>
-      </el-menu>
+        <!-- </el-row> -->
+      </div>
+
+      <!-- 单个索引 每一个生成一次  动态列表数据-->
+      <div class="menus-children" v-if="data[tabs]">
+        <div class="menus-children-item" v-for="(item, index) in data[tabs].children" :key="index">
+          <em>{{index+1}}</em>
+          &nbsp;&nbsp;
+          <a href="#" class="city">{{item.city}}</a>
+          <!-- <nuxt-link :to="`/post?city=${item.city}`">{{item.city}}</nuxt-link> -->
+          &nbsp;&nbsp;
+          <a href="#" class="desc">{{item.desc}}</a>
+        </div>
+      </div>
+    </div>
+    <!-- 推荐 aside-recommend -->
+    <div class="aside-recommend">
+      <h4 class="aside-title">推荐城市</h4>
+      <a href="#" class="aside-recommend-item">
+        <!-- <img :src="$axios.defaults.baseURL+'/assets/images/pic_sea.jpeg'" alt=""> -->
+        <img src="http://157.122.54.189:9093/images/pic_sea.jpeg" alt style="width: 100%" />
+      </a>
     </div>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    data: {
+      type: Array,
+      default() {
+        return [];
+      }
+    }
+  },
   data() {
     return {
-      activeIndex: "1",
-      activeIndex2: "1"
+      tabs: ""
     };
   },
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
+    handleenter(index) {
+      this.tabs = index;
+    },
+    handleleave(index) {
+      this.tabs = index;
     }
   }
 };
 </script>
 
-<style lang="less" scoped>
-.active {
-  border-right-color: #fff !important;
-  color: orange !important;
-}
-/deep/.el-icon-arrow-right:before {
-  content: "";
-}
-/deep/.el-menu--collapse
-  > .el-submenu
-  > .el-submenu__title
-  .el-submenu__icon-arrow {
-  display: block !important;
-  // content: "";
-  width: 10px;
-  height: 10px;
-  border-right: 1px solid #999;
-  border-top: 1px solid #999;
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-  position: absolute;
-  right: 20px;
-  // top: 15px;
-}
-.el-menu {
-  border-right: none;
-}
-/deep/.el-menu--collapse {
-  width: 260px;
-  border: 1px solid #ddd;
-  border-right: none;
-  border-bottom: none;
-  box-shadow: 0 0 1px #f5f5f5;
-  //     z-index: 2;
-}
-/deep/.el-submenu__title {
-  height: 40px;
-  line-height: 40px;
-  border-bottom: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-  padding: 0 20px;
-  font-size: 14px;
-  position: relative;
-  // z-index: 2;
-}
-.el-menu--collapse .el-submenu {
-  position: relative;
-  width: 260px;
-  //     z-index: 2;
-}
+<style lang="less">
+.left-menus {
+  .menus {
+    width: 100%;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 1px #f5f5f5;
+    position: relative;
+    .menus-item {
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+      // line-height: 40px;
+      line-height: 200px/4-2;
+      border-bottom: 1px solid #ddd;
+      padding: 0 20px;
+      font-size: 14px;
+      &:hover {
+        color: #ffb800;
+      }
+      .el-icon-arrow-right {
+        // line-height: 40px;
+        line-height: 200px/4-2;
+        font-size: 20px;
+      }
+    }
+    .menus-children {
+      border: 1px solid #ddd;
+      z-index: 9999999999999999999999;
+      width: 400px;
+      height: 240px;
+      position: absolute;
+      left: 260px;
+      top: -1px;
+      background: #fff;
+      box-shadow: 0 0 1px #f5f5f5;
 
-// .menus-wrapper .menu-item[data-v-053600ae]:after {
-//     display: block;
-//     content: "";
-//     width: 10px;
-//     height: 10px;
-//     border-right: 1px solid #999;
-//     border-top: 1px solid #999;
-//     -webkit-transform: rotate(45deg);
-//     transform: rotate(45deg);
-//     position: absolute;
-//     right: 20px;
-//     top: 15px;
-// }
-
-// 箭头
-// .menus-wrapper .menu-item[data-v-053600ae]:after {
-//     display: block;
-
-// }
+      a {
+        height: 240px/5;
+        line-height: 240px/5;
+      }
+      .city {
+        color: #ffb800;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .desc {
+        color: #999;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      em {
+        color: #ffb800;
+        font-size: 22px;
+      }
+    }
+  }
+  .aside-recommend {
+    width: 100%;
+    margin-top: 20px;
+    .aside-title {
+      font-weight: 400;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 10px;
+    }
+  }
+}
 </style>

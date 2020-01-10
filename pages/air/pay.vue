@@ -38,6 +38,10 @@ export default {
     isPay() {
       // 订单生成成功后，在付款页需要服务器实时推送信息给客户端，检查是否付款成功然后执行对应的操作，这里我们采用 轮询的方式 调用查询订单状态接口
       this.timer = setInterval(() => {
+        const {
+          user: { usreInfo }
+        } = this.$store.state;
+        console.log(usreInfo);
         const data = {
           id: this.$route.query.id,
           nonce_str: this.orderData.price,
