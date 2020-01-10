@@ -5,17 +5,13 @@
       <!-- 循环生成数据 -->
       <!-- 热门 -->
       <div
-        class="menus-item"
+        :class="['menus-item',{'avtive': tabs === index?true:false}]"
         v-for="(item, index) in data"
         :key="index"
         @mouseenter="handleenter(index)"
       >
-        <!-- <el-row type="flex"
-        justify="space-between" class="active">-->
         {{item.type}}
         <i class="el-icon-arrow-right fr"></i>
-
-        <!-- </el-row> -->
       </div>
 
       <!-- 单个索引 每一个生成一次  动态列表数据-->
@@ -53,21 +49,30 @@ export default {
   },
   data() {
     return {
-      tabs: ""
+      tabs: "",
+      isActive: false     
     };
   },
   methods: {
     handleenter(index) {
+      this.isActive = true;
+      console.log(this.isActive);
       this.tabs = index;
+      console.log(index);
     },
     handleleave(index) {
-      this.tabs = index;
+      this.isActive = false;
+      console.log(this.isActive);
+      this.tabs = "";
     }
   }
 };
 </script>
 
 <style lang="less">
+.active {
+  color: #ffb800 !important;
+}
 .left-menus {
   .menus {
     width: 100%;
@@ -78,8 +83,7 @@ export default {
       display: flex;
       justify-content: space-between;
       box-sizing: border-box;
-      // line-height: 40px;
-      line-height: 200px/4-2;
+      line-height: 40px;
       border-bottom: 1px solid #ddd;
       padding: 0 20px;
       font-size: 14px;
@@ -87,8 +91,7 @@ export default {
         color: #ffb800;
       }
       .el-icon-arrow-right {
-        // line-height: 40px;
-        line-height: 200px/4-2;
+        line-height: 40px;
         font-size: 20px;
       }
     }
